@@ -1,0 +1,11 @@
+node_modules
+__pycache__
+.git
+.env
+.idea
+backend/venv
+backend/db.sqlite3
+db.json
+nohup.out
+config.ini
+.next
