@@ -1,11 +1,15 @@
 'use client';
-
 import { useEffect, useRef, useState } from 'react';
+
+
+type textBufferType = [text: string, pauseTime: number];
+
 
 export default function SimpleVoiceStream() {
   const [finalText, setFinalText] = useState('');
   const [interimText, setInterimText] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const [textBuffer, setTextBuffer] = useState<textBufferType[]>([]);
 
   const recognitionRef = useRef<any | null>(null);
   const lastResultTime = useRef<number>(Date.now());
@@ -53,6 +57,8 @@ export default function SimpleVoiceStream() {
 
       if (finalChunk) setFinalText(prev => (prev + finalChunk));
       setInterimText(interim);
+      const piece = finalChunk || interim;
+      if (pauseMs > 500) setTextBuffer(prev => [...prev, [piece, pauseMs]]);
     };
 
     recognitionRef.current = recognition;
@@ -72,20 +78,13 @@ export default function SimpleVoiceStream() {
   const start = () => {
     setFinalText('');
     setInterimText('');
-    try {
-      recognitionRef.current?.start();
-    } catch (e) {
-      console.warn(e);
-    }
+    recognitionRef.current.start();
   };
 
   const stop = () => {
-    try {
-      recognitionRef.current?.stop();
-    } catch {}
+      recognitionRef.current.stop();
+      setTextBuffer([]);
   };
-
-  const transcript = (finalText + (interimText ? ` ${interimText}` : '')).trim();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
@@ -108,10 +107,23 @@ export default function SimpleVoiceStream() {
             ⏹ Стоп
           </button>
         </div>
-
-        <div className="bg-gray-100 p-4 rounded-lg min-h-[150px] whitespace-pre-wrap text-gray-700 text-lg">
-          {transcript || <span className="text-gray-400 italic">Говорите…</span>}
-        </div>
+          <div className="bg-gray-100 p-4 rounded-lg min-h-[150px] text-gray-700 text-sm mt-4 space-y-2">
+              {textBuffer.length === 0 ? (
+                <span className="text-gray-400 italic">Говорите…</span>
+              ) : (
+                textBuffer.map(([text, pause], i) => (
+                  <div
+                    key={i}
+                    className="flex justify-between items-center gap-4 border-b border-gray-200 pb-1"
+                  >
+                    <span className="truncate">{text}</span>
+                    <span className="shrink-0 text-gray-500 tabular-nums">
+                      {pause} мс
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
       </div>
     </div>
   );
