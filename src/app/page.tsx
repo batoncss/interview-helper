@@ -1,9 +1,9 @@
-import VoiceRecorder from './components/VoiceRecorder';
+import SimpleVoiceStream from "@/app/components/SimpleVoiceStream";
 
 export default function Page() {
   return (
     <main>
-      <VoiceRecorder />
+      <SimpleVoiceStream />
     </main>
   );
 }
