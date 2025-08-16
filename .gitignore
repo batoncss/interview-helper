@@ -9,3 +9,4 @@ db.json
 nohup.out
 config.ini
 .next
+.env.local
