@@ -1,23 +1,33 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
-import { globalIgnores } from 'eslint/config'
+import { fileURLToPath } from 'url';
+import path from 'path';
+import tsparser from '@typescript-eslint/parser';
+import tseslint from '@typescript-eslint/eslint-plugin';
+import prettier from 'eslint-plugin-prettier';
 
-export default tseslint.config([
-  globalIgnores(['dist']),
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+export default [
   {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommended,
-      reactHooks.configs['recommended-latest'],
-      reactRefresh.configs.vite,
-    ],
+    ignores: ['node_modules', 'dist'],
+  },
+  {
+    files: ['**/*.{ts,tsx,js,jsx}'],
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
+      parser: tsparser,
+      parserOptions: {
+        project: path.resolve(__dirname, 'tsconfig.eslint.json'),
+        tsconfigRootDir: __dirname,
+        sourceType: 'module',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tseslint,
+      prettier: prettier,
+    },
+    rules: {
+      semi: ['error', 'always'],
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'prettier/prettier': 'error',
     },
   },
-])
+];
