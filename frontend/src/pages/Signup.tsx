@@ -1,4 +1,6 @@
 import * as React from "react";
+import { motion } from "framer-motion";
+import { User, Mail, Lock } from "lucide-react";
 
 export default function SignUp() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -41,116 +43,129 @@ export default function SignUp() {
   };
 
   return (
-    <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-          Создание аккаунта
-        </h1>
-        <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <label
-              htmlFor="login"
-              className="block mb-2 text-sm font-medium text-gray-900"
-            >
-              Ваш логин
-            </label>
-            <input
-              type="text"
-              name="login"
-              id="login"
-              placeholder="логин"
-              required
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
+    <div className="flex min-h-[calc(100vh-70px)] items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md"
+      >
+        <div className="rounded-2xl bg-white p-8 shadow-xl">
+          <h1 className="mb-6 text-center text-2xl font-bold text-gray-800">
+            Создание аккаунта
+          </h1>
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            <div className="space-y-2">
+              <label
+                htmlFor="login"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Ваш логин
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <input
+                  id="login"
+                  name="login"
+                  type="text"
+                  placeholder="логин"
+                  required
+                  className="w-full rounded-lg border border-gray-300 pl-10 pr-3 py-2 text-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                />
+              </div>
+            </div>
 
-            <label
-              htmlFor="email"
-              className="block mb-2 text-sm font-medium text-gray-900"
-            >
-              Ваш email
-            </label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              placeholder="name@company.com"
-              required
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-          </div>
+            <div className="space-y-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Ваш email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="name@company.com"
+                  required
+                  className="w-full rounded-lg border border-gray-300 pl-10 pr-3 py-2 text-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                />
+              </div>
+            </div>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="block mb-2 text-sm font-medium text-gray-900"
-            >
-              Пароль
-            </label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              placeholder="••••••••"
-              required
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-          </div>
+            <div className="space-y-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Пароль
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="••••••••"
+                  required
+                  className="w-full rounded-lg border border-gray-300 pl-10 pr-3 py-2 text-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                />
+              </div>
+            </div>
 
-          <div>
-            <label
-              htmlFor="confirm-password"
-              className="block mb-2 text-sm font-medium text-gray-900"
-            >
-              Повторите пароль
-            </label>
-            <input
-              type="password"
-              name="confirm-password"
-              id="confirm-password"
-              placeholder="••••••••"
-              required
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
-          </div>
+            <div className="space-y-2">
+              <label
+                htmlFor="confirm-password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Повторите пароль
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <input
+                  id="confirm-password"
+                  name="confirm-password"
+                  type="password"
+                  placeholder="••••••••"
+                  required
+                  className="w-full rounded-lg border border-gray-300 pl-10 pr-3 py-2 text-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                />
+              </div>
+            </div>
 
-          <div className="flex items-start">
-            <div className="flex items-center h-5">
+            <div className="flex items-center space-x-2">
               <input
                 id="terms"
-                aria-describedby="terms"
                 type="checkbox"
                 required
-                className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
-            </div>
-            <div className="ml-3 text-sm">
-              <label htmlFor="terms" className="font-light text-gray-500">
+              <label htmlFor="terms" className="text-sm text-gray-600">
                 Я принимаю{" "}
-                <a
-                  href="#"
-                  className="font-medium text-blue-600 hover:underline"
-                >
+                <a href="#" className="text-blue-600 hover:underline">
                   Условия и положения
                 </a>
               </label>
             </div>
-          </div>
 
-          <button
-            type="submit"
-            className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-          >
-            Создать аккаунт
-          </button>
+            <button
+              type="submit"
+              className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+            >
+              Создать аккаунт
+            </button>
 
-          <p className="text-sm font-light text-gray-500">
-            Уже зарегистрированы?{" "}
-            <a href="#" className="font-medium text-blue-600 hover:underline">
-              Войдите тут
-            </a>
-          </p>
-        </form>
-      </div>
+            <p className="text-center text-sm text-gray-600">
+              Уже зарегистрированы?{" "}
+              <a href="#" className="text-blue-600 hover:underline">
+                Войдите тут
+              </a>
+            </p>
+          </form>
+        </div>
+      </motion.div>
     </div>
   );
 }

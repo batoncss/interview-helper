@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# Запуск бэкенда
-cd backend
-uvicorn main:app --reload --port 8000 &
+set -e
+
+
+cd "$(dirname "$0")" || exit 1
+
+uvicorn backend.main:app --reload --port 8000 &
 BACK_PID=$!
 
-# Запуск фронтенда
-cd ../frontend
+cd frontend  || exit 1
 npm run dev &
 
-# Ожидание завершения
 wait $BACK_PID

@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
 
-from main import Base
+from backend.common.db.connection import Base
 
 config_parser = configparser.ConfigParser()
 config_parser.read("../conf.ini")
