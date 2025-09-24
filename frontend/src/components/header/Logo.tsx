@@ -1,12 +1,10 @@
 export default function Logo() {
   return (
-    <div>
-      <a href="/" className="hidden sm:block">
-        <img src="/logo.png" alt="logo" className="w-10" />
-      </a>
-      <a href="/" className="sm:hidden">
-        <img src="/logo.png" alt="logo" className="w-9" />
-      </a>
-    </div>
+    <a
+      href="/"
+      className="inline-flex items-center transition-transform duration-200 hover:scale-105"
+    >
+      <img src="/logo.png" alt="logo" className="w-9 sm:w-10" />
+    </a>
   );
 }

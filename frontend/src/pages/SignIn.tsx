@@ -1,4 +1,6 @@
 import * as React from "react";
+import { motion } from "framer-motion";
+import { User, Lock } from "lucide-react";
 
 export default function SignIn() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -31,68 +33,74 @@ export default function SignIn() {
   };
 
   return (
-    <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form method="POST" className="space-y-6" onSubmit={handleSubmit}>
-        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-          Вход
-        </h1>
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm/6 font-medium text-gray-900"
-          >
-            Логин
-          </label>
-          <div className="mt-2">
-            <input
-              id="login"
-              type="text"
-              name="login"
-              required
-              autoComplete="login"
-              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-            />
-          </div>
-        </div>
-
-        <div>
-          <div className="flex items-center justify-between">
-            <label
-              htmlFor="password"
-              className="block text-sm/6 font-medium text-gray-900"
-            >
-              Пароль
-            </label>
-            <div className="text-sm">
-              <a
-                href="#"
-                className="font-semibold text-indigo-600 hover:text-indigo-500"
+    <div className="flex min-h-[calc(100vh-70px)] items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md"
+      >
+        <div className="rounded-2xl bg-white p-8 shadow-xl">
+          <h1 className="mb-6 text-center text-2xl font-bold text-gray-800">
+            Вход
+          </h1>
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            <div className="space-y-2">
+              <label
+                htmlFor="login"
+                className="block text-sm font-medium text-gray-700"
               >
-                Забыли пароль?
-              </a>
+                Логин
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <input
+                  id="login"
+                  type="text"
+                  name="login"
+                  required
+                  autoComplete="login"
+                  placeholder="Ваш логин"
+                  className="w-full rounded-lg border border-gray-300 pl-10 pr-3 py-2 text-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                />
+              </div>
             </div>
-          </div>
-          <div className="mt-2">
-            <input
-              id="password"
-              type="password"
-              name="password"
-              required
-              autoComplete="current-password"
-              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-            />
-          </div>
-        </div>
 
-        <div>
-          <button
-            type="submit"
-            className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            Войти
-          </button>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Пароль
+                </label>
+                <a href="#" className="text-sm text-blue-600 hover:underline">
+                  Забыли пароль?
+                </a>
+              </div>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  required
+                  autoComplete="current-password"
+                  placeholder="••••••••"
+                  className="w-full rounded-lg border border-gray-300 pl-10 pr-3 py-2 text-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+            >
+              Войти
+            </button>
+          </form>
         </div>
-      </form>
+      </motion.div>
     </div>
   );
 }

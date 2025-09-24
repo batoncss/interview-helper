@@ -1,43 +1,78 @@
+import { useState } from "react";
+import { Menu as MenuIcon, X } from "lucide-react";
+import { NavLink } from "react-router-dom";
+
 export default function Menu() {
-  const links = ["Главная", "О нас", "Контакты"];
+  const links = [
+    { text: "Главная", href: "/" },
+    { text: "О нас", href: "/about" },
+    { text: "Включить помощника", href: "/assistant" },
+  ];
+
+  const [open, setOpen] = useState(false);
+
   return (
-    <nav
-      id="collapseMenu"
-      className="max-lg:hidden lg:block max-lg:before:fixed max-lg:before:bg-black/50 max-lg:before:inset-0 max-lg:before:z-50"
-    >
+    <nav className="relative">
+      {/* Кнопка мобильного меню */}
       <button
-        id="toggleClose"
-        className="lg:hidden fixed top-2 right-4 z-[100] w-9 h-9 flex items-center justify-center rounded-full bg-white border border-gray-200"
+        onClick={() => setOpen(true)}
+        className="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:bg-gray-100 focus:outline-none"
       >
-        ✕
+        <MenuIcon className="h-6 w-6" />
       </button>
 
-      <ul className="lg:flex gap-x-4 max-lg:space-y-3 max-lg:fixed max-lg:bg-white max-lg:w-1/2 max-lg:min-w-[300px] max-lg:top-0 max-lg:left-0 max-lg:p-6 max-lg:h-full max-lg:shadow-md max-lg:overflow-auto z-50">
-        <li className="mb-6 hidden max-lg:block">
-          <a href="#">
-            <img
-              src="https://readymadeui.com/readymadeui.svg"
-              alt="logo"
-              className="w-36"
-            />
-          </a>
-        </li>
-        {links.map((text, i) => (
-          <li
-            key={text}
-            className="max-lg:border-b max-lg:border-gray-300 max-lg:py-3 px-3"
-          >
-            <a
-              href="#"
-              className={`block font-medium text-[15px] hover:text-blue-700 ${
-                i === 0 ? "text-blue-700" : "text-slate-900"
-              }`}
+      {/* Меню для desktop */}
+      <ul className="hidden lg:flex gap-x-6">
+        {links.map(({ text, href }) => (
+          <li key={text}>
+            <NavLink
+              to={href}
+              className={({ isActive }) =>
+                `text-sm font-medium transition-colors ${
+                  isActive
+                    ? "text-blue-600"
+                    : "text-gray-700 hover:text-blue-600"
+                }`
+              }
             >
               {text}
-            </a>
+            </NavLink>
           </li>
         ))}
       </ul>
+
+      {/* Мобильное меню */}
+      {open && (
+        <div className="fixed inset-0 z-50 bg-black/50 lg:hidden">
+          <div className="fixed top-0 left-0 h-full w-72 bg-white shadow-lg p-6 flex flex-col">
+            <button
+              onClick={() => setOpen(false)}
+              className="self-end mb-6 rounded-full p-2 hover:bg-gray-100"
+            >
+              <X className="h-6 w-6 text-gray-700" />
+            </button>
+            <ul className="space-y-4">
+              {links.map(({ text, href }) => (
+                <li key={text}>
+                  <NavLink
+                    to={href}
+                    onClick={() => setOpen(false)}
+                    className={({ isActive }) =>
+                      `block text-base font-medium transition-colors ${
+                        isActive
+                          ? "text-blue-600"
+                          : "text-gray-700 hover:text-blue-600"
+                      }`
+                    }
+                  >
+                    {text}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

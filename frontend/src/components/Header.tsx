@@ -4,12 +4,12 @@ import AuthButtons from "./header/AuthButtons.tsx";
 
 export default function Header() {
   return (
-    <header className="flex shadow-md py-4 px-4 sm:px-10 bg-white min-h-[70px] tracking-wide relative z-50">
-      <div className="relative flex items-center justify-between w-full">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-md">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-8">
         <Logo />
-        <div className="absolute left-1/2 -translate-x-1/2">
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 md:block">
           <Menu />
-        </div>
+        </nav>
         <AuthButtons />
       </div>
     </header>
