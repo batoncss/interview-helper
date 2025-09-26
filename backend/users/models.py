@@ -1,7 +1,7 @@
 from sqlalchemy import Integer, String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 
-from backend.common.db.connection import Base
+from ..common import Base
 
 
 class UserDB(Base):
