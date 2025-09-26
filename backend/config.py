@@ -6,8 +6,6 @@ config_path = Path(__file__).resolve().parent.parent / "conf.ini"
 config = configparser.ConfigParser()
 config.read(config_path)
 
-print(config_path)
-
 
 SECRET_KEY = config["KEYS"]["SECRET_KEY"]
 ALGORITHM = "HS256"

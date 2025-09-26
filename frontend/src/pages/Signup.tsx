@@ -1,46 +1,10 @@
-import * as React from "react";
 import { motion } from "framer-motion";
 import { User, Mail, Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { handleRegister } from "../services/authHandlers.ts";
 
 export default function SignUp() {
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const body = {
-      username: formData.get("login"),
-      email: formData.get("email"),
-      password: formData.get("password"),
-    };
-
-    if (body.password !== formData.get("confirm-password")) {
-      alert("Пароли не совпадают");
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json; charset=UTF-8",
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (!response.ok) {
-        console.error("Ошибка:", response.statusText);
-        return;
-      }
-
-      const data = await response.json();
-      console.log("Успешный ответ:", data);
-
-      if (data.redirectUrl) {
-        window.location.href = data.redirectUrl;
-      }
-    } catch (error) {
-      console.error("Сетевая ошибка:", error);
-    }
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="flex min-h-[calc(100vh-70px)] items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 p-4">
@@ -54,7 +18,10 @@ export default function SignUp() {
           <h1 className="mb-6 text-center text-2xl font-bold text-gray-800">
             Создание аккаунта
           </h1>
-          <form className="space-y-5" onSubmit={handleSubmit}>
+          <form
+            className="space-y-5"
+            onSubmit={(e) => handleRegister(e, navigate)}
+          >
             <div className="space-y-2">
               <label
                 htmlFor="login"
