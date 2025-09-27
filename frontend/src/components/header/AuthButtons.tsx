@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
 type JwtPayload = {
@@ -16,6 +16,7 @@ export default function AuthButtons() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // todo: use tokenStorage instead of localStorage directly
     const token = localStorage.getItem("token");
     console.log(token);
     if (token) {
