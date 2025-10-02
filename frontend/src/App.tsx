@@ -5,6 +5,7 @@ import SignIn from "./pages/SignIn.tsx";
 import SignUp from "./pages/Signup.tsx";
 import About from "./pages/About.tsx";
 import Assistant from "./pages/Assistant.tsx";
+import NotFound from "./pages/NotFound.tsx";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/about" element={<About />} />
               <Route path="/assistant" element={<Assistant />} />
+              <Route path='*' element={<NotFound />} />
             </Routes>
           </div>
         </main>

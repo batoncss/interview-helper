@@ -2,24 +2,33 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
 from jwt.exceptions import InvalidTokenError
 from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.common.db.connection import get_db
-from backend.config import SECRET_KEY, ALGORITHM
-from backend.users.models import UserDB
-from backend.users.repository import get_user_by_username
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from backend import users
+from ..common import get_db
+from ..config import SECRET_KEY, ALGORITHM
+from ..users import get_user_by_username
+
+pwd_hasher = PasswordHasher()
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
 
-def get_password_hash(password):
-    return pwd_context.hash(password)
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    try:
+        return pwd_hasher.verify(hashed_password, plain_password)
+    except VerifyMismatchError:
+        return False
+
+
+def get_password_hash(password: str) -> str:
+    return pwd_hasher.hash(password)
+
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
@@ -27,11 +36,13 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
+
 async def authenticate_user(session: AsyncSession, username: str, password: str):
-    user = await get_user_by_username(session, username)
+    user = await users.get_user_by_username(session, username)
     if not user or not verify_password(password, user.hashed_password):
         return False
     return user
+
 
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
@@ -55,8 +66,9 @@ async def get_current_user(
         raise credentials_exception
     return user
 
+
 async def get_current_active_user(
-    current_user: Annotated[UserDB, Depends(get_current_user)],
+    current_user: Annotated[users.UserDB, Depends(get_current_user)],
 ):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
