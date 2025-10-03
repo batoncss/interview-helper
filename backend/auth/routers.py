@@ -4,30 +4,36 @@ from datetime import timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend import users
-from backend import auth
+from backend.auth import service as auth_service, schemas
 from ..common.db import get_db
 from ..config import ACCESS_TOKEN_EXPIRE_MINUTES
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
+def _create_token_for_user(user: users.UserDB) -> schemas.Token:
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = auth_service.create_access_token(
+        data={"sub": user.username, "email": user.email},
+        expires_delta=access_token_expires,
+    )
+    return schemas.Token(access_token=access_token, token_type="bearer")
 
-@router.post("/register", response_model=auth.Token)
+
+@router.post("/register", response_model=schemas.Token)
 async def register(
-    user: auth.schemas.UserRegister,
+    user: schemas.UserRegister,
     session: AsyncSession = Depends(get_db),
 ):
-    # проверка, что юзернейм и email уникальны
     if await users.get_user_by_username(session, user.username):
         raise HTTPException(status_code=409, detail="Username already registered")
-    if await users.get_user_by_email(session, str(user.email)):
+    if await users.get_user_by_email(session, user.email):
         raise HTTPException(status_code=409, detail="Email already registered")
 
-    # хэшируем пароль argon2
-    hashed_password = auth.get_password_hash(user.password)
+    hashed_password = auth_service.PasswordService.hash(user.password)
 
     new_user = users.UserDB(
         username=user.username,
-        email=str(user.email),
+        email=user.email,
         hashed_password=hashed_password,
         disabled=False,
     )
@@ -35,21 +41,16 @@ async def register(
     await session.commit()
     await session.refresh(new_user)
 
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = auth.create_access_token(
-        data={"sub": new_user.username, "email": new_user.email},
-        expires_delta=access_token_expires,
-    )
-    return auth.schemas.Token(access_token=access_token, token_type="bearer")
+    return _create_token_for_user(new_user)
 
 
-@router.post("/token", response_model=auth.schemas.Token)
+@router.post("/token", response_model=schemas.Token)
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: AsyncSession = Depends(get_db),
 ):
-    user = await auth.authenticate_user(session, form_data.username, form_data.password)
-    if not user:
+    user = await users.get_user_by_username(session, form_data.username)
+    if not user or not auth_service.PasswordService.verify(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -57,8 +58,9 @@ async def login_for_access_token(
         )
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = auth.create_access_token(
+    access_token = auth_service.create_access_token(
         data={"sub": user.username, "email": user.email},
         expires_delta=access_token_expires,
     )
-    return auth.schemas.Token(access_token=access_token, token_type="bearer")
+    return schemas.Token(access_token=access_token, token_type="bearer")
+

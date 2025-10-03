@@ -1,2 +1,2 @@
-from .service import get_password_hash, create_access_token, authenticate_user
+from .service import create_access_token
 from .schemas import Token, TokenData, User, UserInDB, UserRegister
