@@ -50,9 +50,3 @@ export async function register({
     return null;
   }
 }
-
-export function handleLogout(){
-    localStorage.removeItem("token");
-    setUsername(null);
-    navigate("/signin");
-}

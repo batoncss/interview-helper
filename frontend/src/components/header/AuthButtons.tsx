@@ -1,24 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
-import { handleLogout } from "../../services/auth.ts"
+import { useAuth } from "../../hooks/useAuth.ts";
 
 export default function AuthButtons() {
-  const [username, setUsername] = useState<string | null>(null);
+  const username = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decoded = jwtDecode<JwtPayload>(token);
-        setUsername(decoded.username);
-      } catch (err) {
-        console.error("Ошибка декодирования токена:", err);
-      }
-    }
-  }, []);
-
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/signin");
+  };
   return (
     <div className="flex max-lg:ml-auto items-center space-x-3">
       {username ? (
