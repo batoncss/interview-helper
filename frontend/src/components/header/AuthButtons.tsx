@@ -1,10 +1,6 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth.ts";
-
 export default function AuthButtons() {
   const username = useAuth();
   const navigate = useNavigate();
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/signin");
