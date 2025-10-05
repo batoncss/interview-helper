@@ -1,41 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
-
-type JwtPayload = {
-  username: string;
-  user_id: number;
-  exp: number;
-  iat: number;
-  token_type: string;
-  jti: string;
-};
-
 export default function AuthButtons() {
-  const [username, setUsername] = useState<string | null>(null);
+  const username = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // todo: use tokenStorage instead of localStorage directly
-    const token = localStorage.getItem("token");
-    console.log(token);
-    if (token) {
-      try {
-        const decoded = jwtDecode<JwtPayload>(token);
-        console.log(decoded);
-        setUsername(decoded.username);
-      } catch (err) {
-        console.error("Ошибка декодирования токена:", err);
-      }
-    }
-  }, []);
-
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setUsername(null);
     navigate("/signin");
   };
-
   return (
     <div className="flex max-lg:ml-auto items-center space-x-3">
       {username ? (
