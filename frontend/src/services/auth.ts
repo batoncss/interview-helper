@@ -1,22 +1,28 @@
 import { apiLogin, apiRegister } from "../api/authApi";
+import { setToken } from "./tokenStorage.ts";
 
-export async function login(
-  login: string,
-  password: string,
-): Promise<string | null> {
-  try {
-    const response = await apiLogin(login, password);
-    if (!response.ok) return null;
-
-    const data = await response.json();
-    const token = data.access_token;
-    if (token) localStorage.setItem("token", token);
-    return token;
-  } catch (e) {
-    console.error("Ошибка логина:", e);
-    return null;
-  }
+export async function loginAction(login: string, password: string) {
+  const token = await apiLogin(login, password);
+  setToken(token);
 }
+
+// export async function login(
+//   login: string,
+//   password: string,
+// ): Promise<string | null> {
+//   try {
+//     const response = await apiLogin(login, password);
+//     if (!response.ok) return null;
+//
+//     const data = await response.json();
+//     const token = data.access_token;
+//     if (token) localStorage.setItem("token", token);
+//     return token;
+//   } catch (e) {
+//     console.error("Ошибка логина:", e);
+//     return null;
+//   }
+// }
 
 export async function register({
   login,
