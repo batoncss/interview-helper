@@ -22,6 +22,8 @@ echo "Устанавливаем зависимости бэкенда..."
 pip install --upgrade pip
 pip install -r "$BACKEND_DIR/requirements.txt"
 pip install uvicorn
+pip install asyncpg
+pip install python-multipart
 
 echo "Запускаем бэкенд..."
 python -m uvicorn backend.main:app --reload --port 8000
