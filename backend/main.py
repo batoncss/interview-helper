@@ -1,9 +1,12 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from backend.auth.routers import router as auth_router
-from backend.users.routers import router as users_router
-from backend.common.db.connection import engine, Base
+from backend.app.db import engine
+
+
+from backend.app.models.base import Base
+from backend.app.routers.auth import router as auth_router
+from backend.app.routers.users import router as users_router
 
 
 @asynccontextmanager
