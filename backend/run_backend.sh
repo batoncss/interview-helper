@@ -24,6 +24,10 @@ pip install -r "$BACKEND_DIR/requirements.txt"
 pip install uvicorn
 pip install asyncpg
 pip install python-multipart
+pip install "uvicorn[standard]"
+pip install yandex-speechkit
+
+
 
 echo "Запускаем бэкенд..."
 python -m uvicorn backend.main:app --reload --port 8000
