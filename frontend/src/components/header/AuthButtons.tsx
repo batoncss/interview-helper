@@ -1,8 +1,12 @@
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.tsx";
+
 export default function AuthButtons() {
-  const username = useAuth();
+  const { username, setUsername } = useAuth();
   const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("token");
+    setUsername(null);
     navigate("/signin");
   };
   return (
