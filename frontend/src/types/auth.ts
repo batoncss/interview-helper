@@ -1,8 +1,5 @@
-export type JwtPayload = {
+export type customJwtPayload = {
   username: string;
-  user_id: number;
+  email: string;
   exp: number;
-  iat: number;
-  token_type: string;
-  jti: string;
 };

@@ -2,6 +2,7 @@ import { Lock, User } from "lucide-react";
 import { useState } from "react";
 import { loginAction } from "../services/auth.ts";
 import { ServerError } from "../api/authApi.ts";
+import { useAuth } from "../context/AuthContext.tsx";
 
 class PasswordValidationError extends Error {}
 
@@ -30,10 +31,10 @@ const cleanForm = (form: FormData): { login: string; password: string } => {
 };
 
 export default function LoginForm({ onSuccess }: { onSuccess: () => void }) {
-  // todo: add loading state
   const [globalError, setGlobalError] = useState<string>("");
   const [loginError, setLoginError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
+  const { setUsername } = useAuth();
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -43,9 +44,9 @@ export default function LoginForm({ onSuccess }: { onSuccess: () => void }) {
       setLoginError("");
       setPasswordError("");
       setGlobalError("");
-      await loginAction(login, password);
+      const decoded = await loginAction(login, password);
+      setUsername(decoded);
       onSuccess();
-      // const token = await apiLogin(login, password);
     } catch (error) {
       console.error("Login error:", error);
       if (error instanceof LoginValidationError) {

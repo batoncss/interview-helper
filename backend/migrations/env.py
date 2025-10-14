@@ -4,10 +4,10 @@ import configparser
 
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
-
 from alembic import context
 
-from backend.common.db.connection import Base
+
+from backend.app.db.connection import Base
 
 config_parser = configparser.ConfigParser()
 config_parser.read("../conf.ini")
@@ -22,7 +22,6 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline():
-    """Оффлайн-режим (без подключения к БД)."""
     context.configure(
         url=DATABASE_URL,
         target_metadata=target_metadata,

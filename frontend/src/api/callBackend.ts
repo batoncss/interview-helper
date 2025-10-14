@@ -1,4 +1,4 @@
-export default function callBackend(
+export default async function callBackend(
   url: string,
   method: "POST" | "GET" | "PUT" | "PATCH" | "DELETE",
   body?: Record<string, any> | string,
@@ -18,5 +18,5 @@ export default function callBackend(
     }
   }
 
-  return fetch(url, { method, headers, body: payload });
+  return await fetch(url, { method, headers, body: payload });
 }
