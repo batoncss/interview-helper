@@ -6,10 +6,7 @@ async def processing_data(event, ws: WebSocket, stop_flag: bool):
     if stop_flag:
         return True
     try:
-        if "text" in event:
-            await ws.send_text(" ".join(event["text"]))
-        elif "error" in event:
-            await ws.send_text(f"Ошибка: {event['error']}")
+        await ws.send_json(event)
     except (WebSocketDisconnect, RuntimeError):
         print("Попытка отправки на закрытый WebSocket")
         return True

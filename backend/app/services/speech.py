@@ -1,8 +1,7 @@
 import grpc
 import logging
-import yandex.cloud.ai.stt.v3.stt_service_pb2_grpc as stt_service_pb2_grpc
 from starlette.websockets import WebSocket
-
+import yandex.cloud.ai.stt.v3.stt_service_pb2_grpc as stt_service_pb2_grpc
 from backend.app.services.audio_stream import audio_generator
 
 logging.basicConfig(level=logging.DEBUG)
@@ -19,20 +18,22 @@ class SpeechRecognizer:
     async def recognize_streaming_ws(self, ws: WebSocket):
         try:
             async for r in self.stub.RecognizeStreaming(
-                audio_generator(ws, self.RATE, self.CHANNELS),
-                metadata=(('authorization', f'Bearer {self.api_key}'),)
+                    audio_generator(ws, self.RATE, self.CHANNELS),
+                    metadata=(('authorization', f'Bearer {self.api_key}'),)
             ):
                 event_type = r.WhichOneof('Event')
+                if not event_type:
+                    continue
+                event_field = getattr(r, event_type)
                 text = None
-                if event_type == 'partial' and r.partial.alternatives:
-                    text = [a.text for a in r.partial.alternatives]
-                elif event_type == 'final' and r.final.alternatives:
-                    text = [a.text for a in r.final.alternatives]
-                elif event_type == 'final_refinement' and r.final_refinement.normalized_text.alternatives:
-                    text = [a.text for a in r.final_refinement.normalized_text.alternatives]
+                if hasattr(event_field, "alternatives") and event_field.alternatives:
+                    text = event_field.alternatives[0].text if event_field.alternatives[0].text else None
+                elif hasattr(event_field, "normalized_text") and event_field.normalized_text.alternatives:
+                    text = event_field.normalized_text.alternatives[0].text if event_field.normalized_text.alternatives[0].text else None
 
                 if text:
-                    yield {"type": event_type, "text": text}
+                    yield {'event_type': event_type, 'text': [text]}
 
         except grpc.aio.AioRpcError as err:
+            logging.error(f"gRPC error: {err.code()} - {err.details()}")
             yield {"error": f"gRPC error: {err.code()}, details: {err.details()}"}

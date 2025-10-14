@@ -1,8 +1,13 @@
 import { useAssistant } from "../context/AssistantProvider";
 
 export const AssistantUI = () => {
-  const { segments, recording, startRecording, stopRecording, clearSegments } =
-    useAssistant();
+  const {
+    recognizedSpeech,
+    recording,
+    startRecording,
+    stopRecording,
+    clearRecognizedSpeech,
+  } = useAssistant();
 
   return (
     <section className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50">
@@ -25,7 +30,7 @@ export const AssistantUI = () => {
           </button>
         )}
         <button
-          onClick={clearSegments}
+          onClick={clearRecognizedSpeech}
           className="px-6 py-3 rounded-lg text-white font-semibold bg-gray-500 hover:bg-gray-600 transition"
         >
           Очистка
@@ -38,20 +43,22 @@ export const AssistantUI = () => {
             <tr>
               <th className="border p-2 text-left">#</th>
               <th className="border p-2 text-left">Фраза</th>
+              <th className="border p-2 text-left">Вопросы</th>
+              <th className="border p-2 text-left">Ответы</th>
             </tr>
           </thead>
           <tbody>
-            {segments.length === 0 ? (
+            {recognizedSpeech.length === 0 ? (
               <tr>
                 <td colSpan={2} className="p-4 text-gray-500 text-center">
                   Транскрипция появится здесь...
                 </td>
               </tr>
             ) : (
-              segments.map((seg, i) => (
+              recognizedSpeech.map((speech, i) => (
                 <tr key={i}>
                   <td className="border p-2 text-gray-600">{i + 1}</td>
-                  <td className="border p-2">{seg || <em>—</em>}</td>
+                  <td className="border p-2">{speech || <em>—</em>}</td>
                 </tr>
               ))
             )}
