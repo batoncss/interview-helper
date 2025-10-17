@@ -7,8 +7,8 @@ import {
   useCallback,
 } from "react";
 import { WSClient } from "../services/WSClient";
-import { AudioProcessor } from "../services/audioProcessor.ts";
 import generatingListRecognizedSpeech from "../services/recognizedSpeech.ts";
+import { AudioProcessor } from "../services/AudioProcessor.ts";
 
 interface AssistantContextType {
   recognizedSpeech: string[];
