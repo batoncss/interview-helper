@@ -6,8 +6,7 @@ from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
 from alembic import context
 
-
-from backend.app.db.connection import Base
+from backend.app.models.base import Base
 
 config_parser = configparser.ConfigParser()
 config_parser.read("../conf.ini")
