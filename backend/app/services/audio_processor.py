@@ -14,27 +14,16 @@ async def processing_data(event, ws: WebSocket, stop_flag: bool):
 
 
 
+from backend.app.services.speech import SpeechRecognizer
+
 class AudioProcessor:
     def __init__(self, recognizer: SpeechRecognizer):
         self.recognizer = recognizer
-        self._stop = False
 
-    async def handle_ws_audio(self, ws: WebSocket):
-        await ws.accept()
-        try:
-            async for event in self.recognizer.recognize_streaming_ws(ws):
-                stop = await processing_data(event, ws, self._stop)
-                if stop:
-                    break
-        except WebSocketDisconnect:
-            print("Клиент отключился")
-        finally:
-            try:
-                if not self._stop:
-                    await ws.close()
-            except RuntimeError:
-                print("WebSocket уже закрыт")
-
-    def stop(self):
-        self._stop = True
-
+    async def process_stream(self, audio_stream):
+        """
+        Принимает асинхронный генератор байт (например, от WebSocket),
+        и возвращает асинхронный генератор событий распознавания.
+        """
+        async for event in self.recognizer.recognize_streaming(audio_stream):
+            yield event
