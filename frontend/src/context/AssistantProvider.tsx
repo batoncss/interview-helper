@@ -10,11 +10,12 @@ import {
 import { WSClient } from "../services/WSClient";
 import generatingListRecognizedSpeech from "../services/recognizedSpeech";
 import { AudioProcessor } from "../services/AudioProcessor";
-import generatingListQuestions from "../services/questions";
+import generatingQuestion, { answer_question } from "../services/questions";
 
 interface AssistantContextType {
   recognizedSpeech: string[];
-  recognizedQuestions: string[][];
+  recognizedQuestions: string[];
+  answers: string[];
   recording: boolean;
   startRecording: () => Promise<void>;
   stopRecording: () => Promise<void>;
@@ -36,9 +37,8 @@ export const AssistantProvider = ({
   children: React.ReactNode;
 }) => {
   const [recognizedSpeech, setRecognizedSpeech] = useState<string[]>([]);
-  const [recognizedQuestions, setRecognizedQuestions] = useState<string[][]>(
-    [],
-  );
+  const [recognizedQuestions, setRecognizedQuestions] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<string[]>([]);
   const [recording, setRecording] = useState(false);
 
   const wsRef = useRef<WSClient | null>(null);
@@ -49,19 +49,17 @@ export const AssistantProvider = ({
 
     try {
       // 1. Подключаем WebSocket
-      const ws = new WSClient("ws://127.0.0.1:8000/ws", (msg: string) => {
+      const ws = new WSClient("ws://127.0.0.1:8000/ws", async (msg: string) => {
         const data = JSON.parse(msg);
         setRecognizedSpeech((prev) =>
           generatingListRecognizedSpeech(prev, data.event_type, data.text),
         );
 
         if (data.event_type === "final_refinement") {
-          generatingListQuestions(data.text[0]).then((questions: string[]) => {
-            setRecognizedQuestions((prev) => [
-              ...prev,
-              Array.isArray(questions) ? questions : [questions],
-            ]);
-          });
+          const newQuestion = await generatingQuestion(data.text[0]);
+          setRecognizedQuestions((prev) => [...prev, newQuestion]);
+          const newAnswer = await answer_question(newQuestion);
+          setAnswers((prev) => [...prev, newAnswer]);
         }
       });
       ws.connect();
@@ -104,6 +102,7 @@ export const AssistantProvider = ({
   const clearRecognizedSpeech = useCallback(() => {
     setRecognizedSpeech([]);
     setRecognizedQuestions([]);
+    setAnswers([]);
   }, []);
 
   // Очистка при размонтировании
@@ -118,6 +117,7 @@ export const AssistantProvider = ({
       value={{
         recognizedSpeech,
         recognizedQuestions,
+        answers,
         recording,
         startRecording,
         stopRecording,

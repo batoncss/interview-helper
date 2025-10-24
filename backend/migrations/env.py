@@ -1,25 +1,22 @@
-from logging.config import fileConfig
 import asyncio
-import configparser
+from logging.config import fileConfig
 
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
 from alembic import context
 
+from backend.app.config import DATABASE_URL
 from backend.app.models.base import Base
-
-config_parser = configparser.ConfigParser()
-config_parser.read("../conf.ini")
-DATABASE_URL = config_parser["DB"]["URL"]
-
 config = context.config
 
-if config.config_file_name is not None:
+if config.config_file_name:
     fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
 
-
+# -------------------------------
+# Offline режим
+# -------------------------------
 def run_migrations_offline():
     context.configure(
         url=DATABASE_URL,
@@ -31,7 +28,9 @@ def run_migrations_offline():
     with context.begin_transaction():
         context.run_migrations()
 
-
+# -------------------------------
+# Online режим
+# -------------------------------
 def do_run_migrations(connection):
     context.configure(connection=connection, target_metadata=target_metadata)
 
@@ -40,7 +39,6 @@ def do_run_migrations(connection):
 
 
 async def run_migrations_online():
-    """Онлайн-режим (через asyncpg)."""
     connectable = create_async_engine(
         DATABASE_URL,
         poolclass=pool.NullPool,
@@ -51,7 +49,9 @@ async def run_migrations_online():
 
     await connectable.dispose()
 
-
+# -------------------------------
+# Основной запуск
+# -------------------------------
 if context.is_offline_mode():
     run_migrations_offline()
 else:

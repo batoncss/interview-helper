@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-# Устанавливаем системные зависимости для сборки Python расширений
+# Устанавливаем системные зависимости
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
@@ -12,16 +12,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Рабочая директория
 WORKDIR /app
 
-# Копируем бэкенд
-COPY backend /app
+# Копируем только requirements для кеширования слоёв
+COPY backend/requirements.txt .
 
 # Устанавливаем Python зависимости
-RUN pip install --upgrade pip && \
-    pip install -r requirements.txt && \
-    pip install uvicorn asyncpg python-multipart "uvicorn[standard]" yandex-speechkit
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Копируем остальной код
+COPY backend /app
 
 # Переменные окружения
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app
 
-# Команда запуска
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Команда запуска (совместима с docker-compose)
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

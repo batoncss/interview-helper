@@ -2,7 +2,6 @@ import grpc
 import logging
 from typing import AsyncIterable
 import yandex.cloud.ai.stt.v3.stt_service_pb2_grpc as stt_service_pb2_grpc
-from backend.app.services.audio_stream import audio_generator
 
 logging.basicConfig(level=logging.DEBUG)
 
